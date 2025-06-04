@@ -1,3 +1,4 @@
+using System.Threading;
 using Microsoft.EntityFrameworkCore;
 using MonitorApi;
 
@@ -40,7 +41,11 @@ app.MapPost("/monitor", async (MonitorApi.Monitor m, MonitorDbContext db) =>
 }
 );
 
-// MAPPOST HORARIO
+app.MapPost("/horario", async (MonitorApi.Horario h, MonitorDbContext db) =>
+{
+    db.HorarioTabela.Add(h);
+    await db.SaveChangesAsync();
+});
 
 
 app.MapPut("/monitor/{id}", async (int id, MonitorApi.Monitor monitor, MonitorDbContext db) => {

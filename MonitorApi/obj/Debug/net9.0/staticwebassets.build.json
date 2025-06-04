@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "nSLGNoiHTCuqxM9g19wcqn6Qi1ru2y83voWC5tHhBEs=",
+  "Source": "MonitorApi",
+  "BasePath": "_content/MonitorApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

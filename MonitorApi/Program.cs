@@ -1,41 +1,110 @@
+using Microsoft.EntityFrameworkCore;
+using MonitorApi;
+
+// Cria um WebApplicationBuilder, que é usado para //configurar a aplicação
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Adiciona o contexto do banco de dados
+builder.Services.AddDbContext<MonitorDbContext>(
+    options =>
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Adiciona o suporte para endpoints da API
+builder.Services.AddEndpointsApiExplorer();
+
+// app é o objeto que representa a API
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.MapGet("/monitor", async (MonitorDbContext db) =>
 {
-    app.MapOpenApi();
+    return await db.MonitorTabela.ToListAsync();
 }
+);
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
+// listar um registro pelo apelido
+app.MapGet("/monitor/{apelido}", async (string apelido, MonitorDbContext db) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    var monitor = await db.MonitorTabela
+        .Include(m => m.Horarios)
+        .FirstOrDefaultAsync(m => m.Apelido == apelido); // FindAsync não pois apelido não é chave primaria
 
-app.MapGet("/weatherforecast", () =>
+    return monitor is not null ? Results.Ok(monitor) : Results.NotFound("Monitor não encontrado");
+}
+);
+
+app.MapPost("/monitor", async (MonitorApi.Monitor m, MonitorDbContext db) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    db.MonitorTabela.Add(m);
+    await db.SaveChangesAsync();
+}
+);
+
+// MAPPOST HORARIO
+
+
+app.MapPut("/monitor/{id}", async (int id, MonitorApi.Monitor monitor, MonitorDbContext db) => {
+    var monitorIdM = await db.MonitorTabela.FindAsync(id);
+    if (monitorIdM is null) {
+        return Results.NotFound();
+    } else {
+        monitorIdM.Nome = monitor.Nome;
+        monitorIdM.RA = monitor.RA;
+        monitorIdM.Apelido = monitor.Apelido;
+
+        await db.SaveChangesAsync();
+        return Results.NoContent();
+    }
+});
+
+app.MapPut("/horario/{id}", async(int id, Horario horario, MonitorDbContext db) => {
+    var horarioId = await db.HorarioTabela.FindAsync(id);
+    if (horarioId is null) {
+        return Results.NotFound();
+    } else {
+        horarioId.DiaSemana = horario.DiaSemana;
+        horarioId.HorarioAtendimento = horario.HorarioAtendimento;
+
+        await db.SaveChangesAsync();
+        return Results.NoContent();
+    }
+});
+
+
+app.MapDelete("/monitor/{id}", async (int id, MonitorDbContext db) => {
+
+    var monitorDelete = await db.MonitorTabela
+            .Include(h => h.Horarios)
+            .FirstOrDefaultAsync(h => h.IdMonitor == id);
+
+    if (monitorDelete is null)
+    {
+        return Results.NotFound();
+    }
+    else
+    {
+        if (monitorDelete.Horarios.Any()) return Results.BadRequest("Não foi possivel excluir monitores com horarios");
+
+        db.MonitorTabela.Remove(monitorDelete);
+        await db.SaveChangesAsync();
+        return Results.NoContent();
+    }
+});
+
+app.MapDelete("/horario/{id}", async (int id, MonitorDbContext db) =>
+{
+    var horarioDelete = await db.HorarioTabela.FindAsync(id);
+    if (horarioDelete == null)
+    {
+        return Results.NotFound();
+    }
+    else
+    {
+        db.HorarioTabela.Remove(horarioDelete);
+        await db.SaveChangesAsync();
+        return Results.NoContent();
+    }
+
+});
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

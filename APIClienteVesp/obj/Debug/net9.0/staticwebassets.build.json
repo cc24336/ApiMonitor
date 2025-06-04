@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "gXe64+sBne3yBNLTisrAJJuFxf7jj+dGXt5axcP8nmA=",
+  "Source": "APIClienteVesp",
+  "BasePath": "_content/APIClienteVesp",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

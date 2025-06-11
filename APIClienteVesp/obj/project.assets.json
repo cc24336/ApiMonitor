@@ -4717,11 +4717,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\u24315\\Desktop\\APICliente\\ApiClienteVesp\\APIClienteVesp.csproj",
+      "projectUniqueName": "C:\\Users\\u24315\\Documents\\GitHub\\ApiMonitor\\APIClienteVesp\\APIClienteVesp.csproj",
       "projectName": "APIClienteVesp",
-      "projectPath": "C:\\Users\\u24315\\Desktop\\APICliente\\ApiClienteVesp\\APIClienteVesp.csproj",
+      "projectPath": "C:\\Users\\u24315\\Documents\\GitHub\\ApiMonitor\\APIClienteVesp\\APIClienteVesp.csproj",
       "packagesPath": "C:\\Users\\u24315\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\u24315\\Desktop\\APICliente\\ApiClienteVesp\\obj\\",
+      "outputPath": "C:\\Users\\u24315\\Documents\\GitHub\\ApiMonitor\\APIClienteVesp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

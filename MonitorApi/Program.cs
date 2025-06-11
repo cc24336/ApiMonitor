@@ -34,6 +34,21 @@ app.MapGet("/monitor/{apelido}", async (string apelido, MonitorDbContext db) =>
 }
 );
 
+app.MapGet("/horario", async (MonitorDbContext db) =>
+{
+
+    return await db.HorarioTabela.ToListAsync();
+}
+);
+
+app.MapGet("/horario/{id}", async (int id, MonitorDbContext db) =>
+{
+    var horario = await db.HorarioTabela
+        .FirstOrDefaultAsync(h => h.IdMonitor == id);
+
+    return horario is not null ? Results.Ok(horario) : Results.NotFound("Não encontrado");
+});
+
 app.MapPost("/monitor", async (MonitorApi.Monitor m, MonitorDbContext db) =>
 {
     db.MonitorTabela.Add(m);

@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
 namespace MonitorApi
 {
     public class Monitor
@@ -10,6 +12,8 @@ namespace MonitorApi
         public string Nome { get; set; }
         public string Apelido { get; set; }
 
+
+        [JsonIgnore]
         public List<Horario> Horarios { get; set; } = new();
     }
 }
